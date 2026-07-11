@@ -317,7 +317,8 @@ div[data-testid="stButton"] button:focus-visible {
 .metrics-row {
     display: flex;
     gap: 6px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    row-gap: 8px;
     align-items: center;
 }
 .metrics-row > * {
@@ -417,6 +418,41 @@ div[data-testid="stButton"] button:focus-visible {
 }
 
 hr { border: none; border-top: 1px solid var(--border); margin: 8px 0 24px; }
+
+/* ============== RESPONSIVE (MOBILE) ============== */
+@media (max-width: 640px) {
+    .block-container { padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
+
+    .hero-banner { padding: 26px 22px; border-radius: 18px; }
+    .hero-banner h1 { font-size: 1.9rem; }
+    .hero-banner p { font-size: 0.85rem; }
+
+    .section-label { font-size: 1.35rem; margin-bottom: 12px; }
+
+    .results-header { font-size: 1.4rem; }
+
+    .result-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px;
+        gap: 10px;
+    }
+    .card-thumb { width: 40px; height: 40px; font-size: 0.95rem; }
+    .place-name { font-size: 1.15rem; }
+    .menu-name { font-size: 0.9rem; margin-bottom: 8px; }
+
+    .metrics-row { flex-wrap: wrap; gap: 6px; }
+    .metric-pill,
+    .dine-tag,
+    .rec-type-badge,
+    .maps-link {
+        font-size: 0.78rem;
+        padding: 4px 10px;
+    }
+
+    .placeholder-state { height: 340px; }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
