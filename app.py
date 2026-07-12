@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import streamlit.components.v1 as components
 from recommender import get_rekomendasi, df
 
 # =====================================================
@@ -47,6 +48,7 @@ html, body {
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 1.2rem !important; max-width: 1600px !important; margin: 0 auto !important; overflow-x: hidden; }
 * { -webkit-tap-highlight-color: transparent; }
+iframe[height="0"] { display: none !important; }
 
 .hero-banner {
     position: relative;
@@ -311,6 +313,21 @@ div[data-testid="stButton"] button:active {
 div[data-testid="stButton"] button:focus-visible {
     outline: 2px solid var(--primary-hover) !important;
     outline-offset: 2px !important;
+}
+
+/* Reset button: quieter, outline-only style so it doesn't compete
+   visually with the main "Cari Rekomendasi" action */
+div[data-testid="stButton"] button[kind="secondary"] {
+    background: #FFFFFF !important;
+    color: var(--primary) !important;
+    border: 1.5px solid var(--border) !important;
+    box-shadow: none !important;
+    padding: 15px 0 !important;
+}
+div[data-testid="stButton"] button[kind="secondary"]:hover {
+    background: var(--secondary) !important;
+    border-color: var(--primary) !important;
+    box-shadow: none !important;
 }
 
 .search-loading {
@@ -603,6 +620,10 @@ div[data-testid="stButton"] button:focus-visible {
     margin-top: 12px;
     line-height: 1.5;
 }
+/* swap wording between desktop ("sebelah kiri") and mobile ("di atas")
+   layouts, since the columns stack vertically on small screens */
+.desktop-only-text { display: block; }
+.mobile-only-text { display: none; }
 
 hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 
@@ -640,7 +661,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
     }
     .maps-link { width: 100%; justify-content: center; text-align: center; }
 
-    .placeholder-state { height: 340px; }
+    .placeholder-state { display: none; }
+
+    .desktop-only-text { display: none; }
+    .mobile-only-text { display: block; }
 }
 
 /* Hover/lift transforms are meant for mouse users only — on touch
@@ -668,6 +692,35 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 
 </style>
 """, unsafe_allow_html=True)
+
+
+# =====================================================
+# PREVENT MOBILE KEYBOARD FROM POPPING UP ON DROPDOWNS
+# =====================================================
+# st.selectbox's underlying input accepts typing (to search/filter
+# options), which triggers the mobile virtual keyboard on tap. This
+# marks those inputs as read-only so tapping only opens the option
+# list — no keyboard, and the dropdown can be dismissed anytime
+# without being forced to pick something.
+components.html("""
+<script>
+function disableSelectKeyboard() {
+    try {
+        const doc = window.parent.document;
+        const inputs = doc.querySelectorAll('div[data-baseweb="select"] input');
+        inputs.forEach(function(el) {
+            el.setAttribute('readonly', 'readonly');
+            el.setAttribute('inputmode', 'none');
+        });
+    } catch (e) {}
+}
+disableSelectKeyboard();
+try {
+    const observer = new MutationObserver(disableSelectKeyboard);
+    observer.observe(window.parent.document.body, { childList: true, subtree: true });
+} catch (e) {}
+</script>
+""", height=0)
 
 
 # =====================================================
@@ -800,7 +853,7 @@ with col_filter:
 
     f_col1, f_col2 = st.columns(2)
     with f_col1:
-        menu_selected_display = st.selectbox("Menu", menu_display)
+        menu_selected_display = st.selectbox("Menu", menu_display, key="menu_select")
         menu = menu_map[menu_selected_display]
 
     filtered_df = df[df["menu_category"] == menu]
@@ -810,14 +863,15 @@ with col_filter:
     flavor_map     = dict(zip(flavor_display, flavor_options))
 
     with f_col2:
-        flavor_selected_display = st.selectbox("Flavor", flavor_display)
+        flavor_selected_display = st.selectbox("Flavor", flavor_display, key="flavor_select")
         flavor = flavor_map[flavor_selected_display] if flavor_display else None
 
     f_col3, f_col4 = st.columns(2)
     with f_col3:
         price = st.selectbox(
             "Rentang Harga",
-            sorted(df["range_price"].dropna().unique().tolist())
+            sorted(df["range_price"].dropna().unique().tolist()),
+            key="price_select"
         )
     with f_col4:
         dine = st.selectbox(
@@ -827,7 +881,8 @@ with col_filter:
                 "takeaway": f"{DINE_ICONS['takeaway']} Takeaway",
                 "dine_in" : f"{DINE_ICONS['dine_in']} Dine In",
                 "both"    : f"{DINE_ICONS['both']} Keduanya"
-            }.get(x, x)
+            }.get(x, x),
+            key="dine_select"
         )
 
     rating_map   = {"3.5+": 3.5, "4.0+": 4.0, "4.5+": 4.5}
@@ -852,7 +907,17 @@ with col_filter:
 
     st.markdown("<div class=\"btn-spacer\" style=\"height:6px\"></div>", unsafe_allow_html=True)
 
-    cari = st.button("🍰  Cari Rekomendasi", use_container_width=True)
+    def reset_filters():
+        for k in ["menu_select", "flavor_select", "price_select", "dine_select", "rating_radio", "topn_radio"]:
+            if k in st.session_state:
+                del st.session_state[k]
+        st.session_state.is_searching = False
+
+    btn_col1, btn_col2 = st.columns([1.4, 1])
+    with btn_col1:
+        cari = st.button("🍰  Cari Rekomendasi", use_container_width=True, type="primary")
+    with btn_col2:
+        st.button("🔄 Reset", use_container_width=True, on_click=reset_filters, key="reset_btn")
 
     if cari:
         st.session_state.is_searching = True
@@ -863,7 +928,8 @@ with col_result:
         st.markdown("""
         <div class="placeholder-state">
             <div class="emoji">🍰</div>
-            <p>Pilih filter di sebelah kiri,<br>lalu klik <strong>Cari Rekomendasi</strong><br>untuk melihat hasilnya di sini.</p>
+            <p class="desktop-only-text">Pilih filter di sebelah kiri,<br>lalu klik <strong>Cari Rekomendasi</strong><br>untuk melihat hasilnya di sini.</p>
+            <p class="mobile-only-text">Pilih filter di atas,<br>lalu klik <strong>Cari Rekomendasi</strong><br>untuk melihat hasilnya di sini.</p>
         </div>
         """, unsafe_allow_html=True)
     else:
