@@ -42,9 +42,11 @@ html, body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg);
     color: var(--text);
+    overflow-x: hidden;
 }
 #MainMenu, footer, header { visibility: hidden; }
-.block-container { padding-top: 1.2rem !important; max-width: 1600px !important; margin: 0 auto !important; }
+.block-container { padding-top: 1.2rem !important; max-width: 1600px !important; margin: 0 auto !important; overflow-x: hidden; }
+* { -webkit-tap-highlight-color: transparent; }
 
 .hero-banner {
     position: relative;
@@ -187,17 +189,23 @@ label[data-testid="stWidgetLabel"] {
     letter-spacing: 0.03em;
 }
 
-div[data-baseweb="select"] > div {
+/* Single clean border on the outer control only; inner layers are
+   explicitly stripped so it never doubles up */
+div[data-testid="stSelectbox"] div[data-baseweb="select"] {
     background: #FFFFFF !important;
     border: 1.5px solid var(--border) !important;
     border-radius: 12px !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.9rem !important;
     min-height: 42px !important;
     box-shadow: 0 2px 6px rgba(142,24,51,0.05) !important;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s !important;
 }
-div[data-baseweb="select"] {
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.9rem !important;
     min-height: 42px !important;
 }
 /* keep the selected value on one line with ellipsis instead of being clipped */
@@ -214,11 +222,11 @@ div[data-baseweb="select"] > div > div:first-of-type * {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
-div[data-baseweb="select"] > div:hover {
+div[data-testid="stSelectbox"] div[data-baseweb="select"]:hover {
     border-color: var(--accent) !important;
     background: #FFFDF9 !important;
 }
-div[data-baseweb="select"] > div:focus-within {
+div[data-testid="stSelectbox"] div[data-baseweb="select"]:focus-within {
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 4px rgba(142,24,51,0.14) !important;
 }
@@ -432,7 +440,7 @@ div[data-testid="stButton"] button:focus-visible {
 .card-thumb.rank-2 { background: var(--secondary); border-color: #EFC0CE; color: var(--primary); }
 .card-thumb.rank-3 { background: #FBEAD0; border-color: #EFD3A0; color: #7A5416; }
 
-.card-body { flex: 1; min-width: 0; }
+.card-body { flex: 1; min-width: 0; width: 100%; }
 
 .card-top-row {
     display: flex;
@@ -440,20 +448,27 @@ div[data-testid="stButton"] button:focus-visible {
     flex-wrap: wrap;
     gap: 10px 12px;
     margin-bottom: 12px;
+    width: 100%;
 }
 .place-name {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
     font-size: 1.4rem;
     color: var(--text);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
 }
 .menu-name {
     font-family: 'Inter', sans-serif;
     font-size: 1.12rem;
     color: var(--subtitle);
     font-weight: 600;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
 }
 
 /* ==== 3. BADGE COLORS BY RECOMMENDATION TYPE ==== */
@@ -539,6 +554,11 @@ div[data-testid="stButton"] button:focus-visible {
     white-space: nowrap;
     box-shadow: 0 4px 12px rgba(142,24,51,0.28);
     transition: box-shadow .25s ease, transform .25s ease, background .25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 .maps-link:hover {
     background: var(--primary-hover) !important;
@@ -621,6 +641,29 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
     .maps-link { width: 100%; justify-content: center; text-align: center; }
 
     .placeholder-state { height: 340px; }
+}
+
+/* Hover/lift transforms are meant for mouse users only — on touch
+   devices (phones/tablets) these get "stuck" on tap and cause the
+   jittery/shaky feeling, so we cancel them there. */
+@media (hover: none), (pointer: coarse) {
+    .result-card,
+    .result-card:hover,
+    .result-card:hover .card-thumb,
+    .metric-pill,
+    .metric-pill:hover,
+    .dine-tag,
+    .dine-tag:hover,
+    .maps-link,
+    .maps-link:hover,
+    div[data-testid="stButton"] button,
+    div[data-testid="stButton"] button:hover,
+    div[data-testid="stRadio"] > div > label,
+    div[data-testid="stRadio"] > div > label:hover,
+    div[data-testid="stSelectbox"] div[data-baseweb="select"],
+    div[data-testid="stSelectbox"] div[data-baseweb="select"]:hover {
+        transform: none !important;
+    }
 }
 
 </style>
@@ -783,7 +826,7 @@ with col_filter:
             format_func=lambda x: {
                 "takeaway": f"{DINE_ICONS['takeaway']} Takeaway",
                 "dine_in" : f"{DINE_ICONS['dine_in']} Dine In",
-                "both"    : f"{DINE_ICONS['both']} Both"
+                "both"    : f"{DINE_ICONS['both']} Keduanya"
             }.get(x, x)
         )
 
