@@ -695,13 +695,18 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 
 
 # =====================================================
-# PREVENT MOBILE KEYBOARD FROM POPPING UP ON DROPDOWNS
+# PREVENT MOBILE KEYBOARD + FIX "TAP OUTSIDE TO CLOSE" ON DROPDOWNS
 # =====================================================
-# st.selectbox's underlying input accepts typing (to search/filter
-# options), which triggers the mobile virtual keyboard on tap. This
-# marks those inputs as read-only so tapping only opens the option
-# list — no keyboard, and the dropdown can be dismissed anytime
-# without being forced to pick something.
+# 1) st.selectbox's underlying input accepts typing (to search/filter
+#    options), which triggers the mobile virtual keyboard on tap. This
+#    marks those inputs as read-only so tapping only opens the option
+#    list — no keyboard.
+# 2) On mobile browsers, tapping outside an open dropdown often fails
+#    to close it (touch events don't reliably trigger BaseWeb's
+#    click-outside listener), forcing the user to pick an option just
+#    to get rid of it. We add our own touch/click listener that blurs
+#    the open select whenever the tap lands outside it or its popover
+#    list, closing it without changing the selection.
 components.html("""
 <script>
 function disableSelectKeyboard() {
@@ -714,10 +719,37 @@ function disableSelectKeyboard() {
         });
     } catch (e) {}
 }
+
+function closeDropdownOnOutsideTap(e) {
+    try {
+        const doc = window.parent.document;
+        const active = doc.activeElement;
+        if (!active || active.tagName !== 'INPUT') return;
+        const insideSelect = active.closest('div[data-baseweb="select"]');
+        if (!insideSelect) return;
+
+        const target = e.target;
+        const tappedInsideSelect = target.closest && target.closest('div[data-baseweb="select"]');
+        const tappedInsidePopover = target.closest && (
+            target.closest('div[data-baseweb="popover"]') ||
+            target.closest('ul[data-testid="stSelectboxVirtualDropdown"]') ||
+            target.closest('li[role="option"]')
+        );
+        if (!tappedInsideSelect && !tappedInsidePopover) {
+            active.blur();
+        }
+    } catch (err) {}
+}
+
 disableSelectKeyboard();
 try {
     const observer = new MutationObserver(disableSelectKeyboard);
     observer.observe(window.parent.document.body, { childList: true, subtree: true });
+} catch (e) {}
+
+try {
+    window.parent.document.addEventListener('touchstart', closeDropdownOnOutsideTap, true);
+    window.parent.document.addEventListener('mousedown', closeDropdownOnOutsideTap, true);
 } catch (e) {}
 </script>
 """, height=0)
