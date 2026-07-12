@@ -949,7 +949,7 @@ with col_filter:
     with btn_col1:
         cari = st.button("🍰  Cari Rekomendasi", use_container_width=True, type="primary")
     with btn_col2:
-        st.button("🔄 Reset", use_container_width=True, on_click=reset_filters, key="reset_btn")
+        st.button("Reset", use_container_width=True, on_click=reset_filters, key="reset_btn")
 
     if cari:
         st.session_state.is_searching = True
