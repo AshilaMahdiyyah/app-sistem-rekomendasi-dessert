@@ -84,7 +84,7 @@ iframe[height="0"] { display: none !important; }
     background: radial-gradient(circle, rgba(231,184,92,0.18) 0%, rgba(231,184,92,0) 70%);
     border-radius: 50%;
 }
-.hero-content { position: relative; z-index: 2; max-width: 600px; }
+.hero-content { position: relative; z-index: 2; max-width: 640px; }
 .hero-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -103,16 +103,17 @@ iframe[height="0"] { display: none !important; }
 }
 .hero-banner h1 {
     font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
-    font-size: 2.35rem;
-    letter-spacing: 0.005em;
-    line-height: 1.1;
-    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 2.7rem;
+    letter-spacing: 0.01em;
+    line-height: 1.08;
+    color: #FFF3E6 !important;
     margin: 0 0 2px;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.35), 0 4px 24px rgba(0,0,0,0.25);
 }
 .hero-banner h1 span {
-    color: var(--accent);
+    color: #F0C879 !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(240,200,121,0.35);
 }
 .hero-banner p {
     font-family: 'Inter', sans-serif;
@@ -122,7 +123,8 @@ iframe[height="0"] { display: none !important; }
     color: rgba(255,255,255,0.9);
     margin: 0;
     line-height: 1.6;
-    max-width: 480px;
+    max-width: none;
+    white-space: nowrap;
 }
 .hero-visual {
     position: relative;
@@ -143,12 +145,14 @@ iframe[height="0"] { display: none !important; }
 .section-label {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
-    font-size: 1.7rem;
+    font-size: 1.42rem;
     color: var(--text);
     margin-bottom: 2px;
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 /* Keep the outer two-column row top-aligned so the filter card
@@ -380,7 +384,7 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     font-weight: 700;
     font-size: 1.8rem;
     color: var(--text);
-    margin: 0 0 20px;
+    margin: 0 0 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -396,37 +400,40 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     font-size: 0.9rem;
 }
 
-/* ==== 2. CARD HOVER ANIMATION ==== */
+/* ====================================================
+   RESULT CARD — 3 kolom eksplisit, ukuran ringkas/compact:
+   1) Ranking (~8-10%)  2) Info restoran/menu (~65-70%)  3) Aksi (~20-25%)
+   ==================================================== */
 .result-card {
     position: relative;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 20px;
-    margin-bottom: 18px;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
 
-    display: flex;
-    width: 100%;
-
-    gap: 16px;
+    display: grid;
+    grid-template-columns: minmax(46px, 10%) 1fr minmax(110px, 20%);
+    gap: 4px 14px;
     align-items: center;
+    width: 100%;
 
     box-sizing: border-box;
 
-    box-shadow: 0 1px 8px rgba(142,24,51,.05);
+    box-shadow: 0 1px 6px rgba(142,24,51,.05);
     transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     animation: fadeInUp .45s ease both;
 }
 .result-card:hover {
-    box-shadow: 0 10px 24px rgba(142,24,51,0.16);
-    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(142,24,51,0.16);
+    transform: translateY(-2px);
     border-color: var(--accent);
 }
 
 .star-rating {
     position: relative;
     display: inline-block;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     line-height: 1;
     letter-spacing: 1px;
 }
@@ -440,17 +447,25 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     color: var(--accent);
 }
 
+/* ==== Kolom 1: Ranking ==== */
+.card-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
 .card-thumb {
     flex-shrink: 0;
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--badge-yellow-text);
     background: var(--badge-yellow);
     border: 1px solid var(--secondary);
@@ -463,79 +478,101 @@ div[data-testid="stButton"] button[kind="secondary"] p{
 .card-thumb.rank-2 { background: var(--secondary); border-color: #EFC0CE; color: var(--primary); }
 .card-thumb.rank-3 { background: #FBEAD0; border-color: #EFD3A0; color: #7A5416; }
 
-.card-body { flex: 1; min-width: 0; width: 100%; }
-
-.card-top-row {
+/* ==== Kolom 2: restoran, menu, & informasi (fokus utama kartu) ==== */
+.card-body {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px 12px;
-    margin-bottom: 12px;
-    width: 100%;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
 }
-.place-name {
+.card-body .place-name {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
-    font-size: 1.4rem;
+    font-size: 1.02rem;
     color: var(--text);
     white-space: normal;
     overflow-wrap: break-word;
     word-break: break-word;
-    max-width: 100%;
+    line-height: 1.25;
 }
-.menu-name {
+
+/* baris atas: nama tempat lalu badge tipe rekomendasi langsung di
+   sampingnya (bukan didorong ke ujung kanan) */
+.card-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.card-top-row .place-name {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+.card-top-row .badge-info {
+    flex-shrink: 0;
+}
+.card-top-row .badge-info summary .rec-type-badge {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+}
+
+.card-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.menu-label {
     font-family: 'Inter', sans-serif;
-    font-size: 1.12rem;
+    font-size: 0.68rem;
+    font-weight: 700;
     color: var(--subtitle);
-    font-weight: 600;
-    white-space: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.menu-name-hero {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 1.08rem;
+    line-height: 1.2;
+    letter-spacing: 0;
+    color: var(--text);
     overflow-wrap: break-word;
     word-break: break-word;
-    max-width: 100%;
+}
+
+.meta-pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
 }
 
 /* ==== 3. BADGE COLORS BY RECOMMENDATION TYPE ==== */
 .rec-type-badge {
     border-radius: 40px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    padding: 5px 14px;
+    font-size: 0.78rem;
+    padding: 4px 11px;
     font-weight: 600;
     white-space: nowrap;
 }
 
-.metrics-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    row-gap: 8px;
-    align-items: center;
-    justify-content: space-between;
-}
-.metrics-left {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    row-gap: 8px;
-    align-items: center;
-}
-.metrics-row > div, .metrics-left > div {
-    box-sizing: border-box;
+.metric-pill {
+    background: var(--badge-yellow);
+    border: 1px solid var(--secondary);
+    border-radius: 40px;
+    padding: 4px 11px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.86rem;
+    color: var(--badge-yellow-text);
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
     line-height: 1.2;
     white-space: nowrap;
     flex-shrink: 0;
-}
-.metric-pill {
-    background: var(--badge-yellow);
-    border: 1px solid var(--secondary);
-    border-radius: 40px;
-    padding: 5px 14px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    color: var(--badge-yellow-text);
-    font-weight: 600;
     gap: 4px;
     transition: transform .2s ease;
 }
@@ -550,16 +587,27 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     border: 1px solid var(--secondary);
     color: var(--badge-green-text);
     border-radius: 40px;
-    padding: 5px 14px;
+    padding: 4px 11px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.86rem;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    line-height: 1.2;
+    white-space: nowrap;
+    flex-shrink: 0;
     transition: transform .2s ease;
 }
 .dine-tag:hover { transform: translateY(-2px); }
+
+/* ==== Kolom 3: aksi (tombol lokasi) ==== */
+.card-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
 
 .maps-link,
 .maps-link:hover,
@@ -570,23 +618,40 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     border: none;
     color: #FFFFFF !important;
     border-radius: 40px;
-    padding: 8px 18px;
+    padding: 9px 16px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 700;
     white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(142,24,51,0.28);
+    box-shadow: 0 3px 10px rgba(142,24,51,0.28);
     transition: box-shadow .25s ease, transform .25s ease, background .25s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+    width: 100%;
     max-width: 100%;
+}
+.maps-link {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    outline: none;
 }
 .maps-link:hover {
     background: var(--primary-hover) !important;
-    box-shadow: 0 8px 18px rgba(110,18,39,0.36) !important;
-    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(110,18,39,0.36) !important;
+    transform: translateY(-2px);
+}
+.maps-link:active {
+    background: var(--primary-hover) !important;
+    box-shadow: 0 3px 10px rgba(110,18,39,0.32) !important;
+    transform: translateY(1px) scale(0.97) !important;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease !important;
+}
+.maps-link:focus-visible {
+    outline: 2px solid var(--primary-hover);
+    outline-offset: 2px;
+    border-radius: 40px;
 }
 
 .placeholder-state{
@@ -633,37 +698,108 @@ div[data-testid="stButton"] button[kind="secondary"] p{
 
 hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 
+/* ==== INFO POPOVER PER BADGE ==== */
+.badge-info {
+    position: relative;
+    display: inline-block;
+}
+.badge-info summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+}
+.badge-info summary::-webkit-details-marker { display: none; }
+
+.badge-info summary .rec-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.badge-info summary .info-icon {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+    opacity: 0.9;
+    vertical-align: middle;
+}
+
+.badge-info-content {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 30;
+    width: 220px;
+    max-width: 70vw;
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: 0 10px 28px rgba(142,24,51,0.18);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--text);
+    animation: fadeInUp .15s ease both;
+}
+.badge-info-content::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 16px;
+    width: 12px;
+    height: 12px;
+    background: #FFFFFF;
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    transform: rotate(45deg);
+}
+
+@media (max-width: 640px) {
+    .badge-info-content { width: 190px; font-size: 0.74rem; }
+}
+
 @media (max-width: 640px) {
     .block-container { padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
 
     .hero-banner { padding: 20px 22px; border-radius: 18px; gap: 12px; }
-    .hero-banner h1 { font-size: 1.7rem; }
-    .hero-banner p { font-size: 0.85rem; }
+    .hero-banner h1 { font-size: 1.9rem; }
+    .hero-banner p { font-size: 0.85rem; white-space: normal; }
     .hero-eyebrow { font-size: 0.62rem; padding: 5px 11px; }
     .hero-visual { display: none; }
 
-    .section-label { font-size: 1.3rem; margin-bottom: 2px; }
+    .section-label { font-size: 1.12rem; margin-bottom: 2px; }
 
     .results-header { font-size: 1.35rem; }
 
     .result-card {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 16px;
-        gap: 12px;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "rank body"
+            "action action";
+        padding: 12px 14px;
+        gap: 8px 10px;
     }
-    .card-thumb { width: 40px; height: 40px; font-size: 0.95rem; }
-    .card-top-row { gap: 6px 10px; }
-    .place-name { font-size: 1.15rem; }
-    .menu-name { font-size: 1rem; }
+    .card-rank {
+        grid-area: rank;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+    .card-body {
+        grid-area: body;
+    }
+    .card-action {
+        grid-area: action;
+    }
+    .card-thumb { width: 38px; height: 38px; font-size: 0.9rem; }
+    .card-body .place-name { font-size: 0.86rem; }
+    .menu-name-hero { font-size: 0.78rem; }
 
-    .metrics-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .metrics-left { flex-wrap: wrap; gap: 6px; }
+    .meta-pills { gap: 5px; }
     .metric-pill,
     .dine-tag,
     .rec-type-badge {
-        font-size: 0.78rem;
-        padding: 4px 10px;
+        font-size: 0.68rem;
+        padding: 3px 8px;
     }
     .maps-link { width: 100%; justify-content: center; text-align: center; }
 
@@ -852,6 +988,19 @@ def theme_for_type(rec_type):
     key = str(rec_type).strip().lower()
     return TYPE_THEME_MAP.get(key, THEME_BROWN)
 
+# ==== PENJELASAN TIAP TIPE REKOMENDASI (UNTUK POPOVER BADGE) ====
+TYPE_INFO_MAP = {
+    "paling cocok": "Pas banget! Menu, rasa, harga, dan opsi penyajiannya sesuai semua sama pilihanmu.",
+    "harga / dine beda": "Menu & rasanya sama kok, cuma harga atau opsi penyajiannya agak beda.",
+    "variasi rasa": "Menunya sama, tapi coba rasa lain — siapa tau kamu suka juga.",
+    "menu & rasa serupa": "Gak ada yang persis, jadi ini yang paling mirip sama seleramu.",
+    "alternatif lainnya": "Rekomendasi cadangan, tapi tetap yang paling mirip ke seleramu.",
+}
+
+def info_for_type(rec_type):
+    key = str(rec_type).strip().lower()
+    return TYPE_INFO_MAP.get(key, "Rekomendasi ini dipilih berdasarkan tingkat kemiripan dengan preferensimu.")
+
 
 # =====================================================
 # HERO BANNER
@@ -861,7 +1010,7 @@ st.markdown("""
     <div class="hero-content">
         <span class="hero-eyebrow">🍨 Sistem Rekomendasi Dessert</span>
         <h1>Dessert Finder <span>Blok M</span></h1>
-        <p>Temukan rekomendasi dessert yang sesuai dengan seleramu</p>
+        <p>Temukan rekomendasi dessert di Blok M yang sesuai dengan seleramu!</p>
     </div>
     <div class="hero-visual">🍰</div>
 </div>
@@ -883,7 +1032,7 @@ if "has_result" not in st.session_state:
 col_filter, col_result = st.columns([1, 2.15], gap="large")
 
 with col_filter:
-    st.markdown('<div class="section-label">🔍 Filter Pencarian</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">🔍 Preferensi Rekomendasi</div>', unsafe_allow_html=True)
 
     menu_options = sorted(df["menu_category"].dropna().unique().tolist())
     menu_display = [prettify(m) for m in menu_options]
@@ -918,7 +1067,7 @@ with col_filter:
             format_func=lambda x: {
                 "takeaway": f"{DINE_ICONS['takeaway']} Takeaway",
                 "dine_in" : f"{DINE_ICONS['dine_in']} Dine In",
-                "both"    : f"{DINE_ICONS['both']} Keduanya"
+                "both"    : f"{DINE_ICONS['both']} Both"
             }.get(x, x),
             key="dine_select"
         )
@@ -966,8 +1115,8 @@ with col_result:
         st.markdown("""
         <div class="placeholder-state">
             <div class="emoji">🍰</div>
-            <p class="desktop-only-text">Pilih filter di sebelah kiri,<br>lalu klik <strong>Cari Rekomendasi</strong><br>untuk melihat hasilnya di sini.</p>
-            <p class="mobile-only-text">Pilih filter di atas,<br>lalu klik <strong>Cari Rekomendasi</strong><br>untuk melihat hasilnya di sini.</p>
+            <p class="desktop-only-text">Pilih preferensi di sebelah kiri,<br>lalu klik <strong>Cari Rekomendasi</strong><br>untuk melihat hasil rekomendasi di sini.</p>
+            <p class="mobile-only-text">Pilih preferensi di atas,<br>lalu klik <strong>Cari Rekomendasi</strong><br>untuk melihat hasil rekomendasi di sini.</p>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -1026,6 +1175,7 @@ with col_result:
 
                     rec_type = row['recommendation_type']
                     theme = theme_for_type(rec_type)
+                    rec_info = info_for_type(rec_type)
 
                     maps_url = row.get("maps_url", None)
                     maps_btn = f'<a href="{maps_url}" target="_blank" class="maps-link">📍 Lihat Lokasi</a>' if maps_url else ''
@@ -1036,23 +1186,51 @@ with col_result:
                     delay = min(rank * 0.06, 0.4)
 
                     card_html = (
-                        f'<div class="result-card" style="background:{theme["bg"]}; border-color:{theme["border"]}; border-left:5px solid {theme["accent"]}; animation-delay:{delay}s;">'
+                        f'<div class="result-card" style="background:{theme["bg"]}; border-color:{theme["border"]}; border-left:4px solid {theme["accent"]}; animation-delay:{delay}s;">'
+
+                        # ==== Kolom 1 — Ranking ====
+                        f'<div class="card-rank">'
                         f'<div class="card-thumb {rank_cls}">#{rank}</div>'
+                        f'</div>'
+
+                        # ==== Kolom 2 — Restoran, menu, & informasi ====
                         f'<div class="card-body">'
+
+                        # baris atas: nama tempat + badge tipe rekomendasi di sampingnya
                         f'<div class="card-top-row">'
                         f'<span class="place-name">{row["nama_tempat"]}</span>'
-                        f'<span class="menu-name">{prettify(row["recommended_item"])}</span>'
-                        f'<span class="rec-type-badge" style="background:{theme["badge_bg"]}; color:{theme["badge_text"]};">{rec_type}</span>'
+                        f'<details class="badge-info" name="rec-badge-group">'
+                        f'<summary><span class="rec-type-badge" style="background:{theme["badge_bg"]}; color:{theme["badge_text"]};">{rec_type}'
+                        f'<svg class="info-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        f'<circle cx="8" cy="8" r="6.75" stroke="currentColor" stroke-width="1.3"/>'
+                        f'<rect x="7.25" y="6.75" width="1.5" height="4.5" rx="0.75" fill="currentColor"/>'
+                        f'<circle cx="8" cy="4.85" r="0.95" fill="currentColor"/>'
+                        f'</svg>'
+                        f'</span></summary>'
+                        f'<div class="badge-info-content">{rec_info}</div>'
+                        f'</details>'
                         f'</div>'
-                        f'<div class="metrics-row">'
-                        f'<div class="metrics-left">'
+
+                        # menu tetap di baris tersendiri di bawah nama tempat
+                        # (label "Menu" lalu nama menu di bawahnya), ukuran ringkas
+                        f'<div class="card-menu">'
+                        f'<span class="menu-label">Menu</span>'
+                        f'<span class="menu-name-hero">{prettify(row["recommended_item"])}</span>'
+                        f'</div>'
+
+                        # baris metrik: rating, harga, dine option saja
+                        f'<div class="meta-pills">'
                         f'<div class="metric-pill">{stars_html} <span class="val">{row["rating"]}</span></div>'
                         f'<div class="metric-pill">💰 <span class="val">{row["range_price"]}</span></div>'
                         f'<div class="dine-tag">{dine_label}</div>'
                         f'</div>'
+                        f'</div>'
+
+                        # ==== Kolom 3 — Aksi ====
+                        f'<div class="card-action">'
                         f'{maps_btn}'
                         f'</div>'
-                        f'</div>'
+
                         f'</div>'
                     )
                     st.markdown(card_html, unsafe_allow_html=True)
