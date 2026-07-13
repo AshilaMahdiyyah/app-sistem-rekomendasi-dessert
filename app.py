@@ -506,7 +506,12 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     flex-wrap: nowrap;
 }
 .card-top-row .place-name {
-    flex: 1 1 auto;
+    /* flex-grow: 0 so the box only takes up as much width as the
+       text itself needs — otherwise it stretches to fill the row
+       and the badge ends up far to the right instead of hugging
+       the name. flex-shrink stays on so long names still truncate
+       instead of overflowing the card. */
+    flex: 0 1 auto;
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -699,6 +704,28 @@ div[data-testid="stButton"] button[kind="secondary"] p{
 .desktop-only-text { display: block; }
 .mobile-only-text { display: none; }
 
+.search-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border-radius: 40px;
+    padding: 11px 16px;
+    margin-top: 12px;
+    text-align: center;
+    animation: fadeInUp .4s ease both, bounceHint 1.4s ease-in-out infinite;
+}
+@keyframes bounceHint {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
 hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 
 /* ==== INFO POPOVER PER BADGE ==== */
@@ -823,6 +850,48 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
     }
     .card-thumb { width: 38px; height: 38px; font-size: 0.9rem; }
     .card-body .place-name { font-size: 0.98rem; }
+
+    /* On mobile there isn't enough width to keep the place name on
+       a single truncated line next to the badge — let it wrap onto
+       multiple lines instead of being cut off, and keep the badge
+       aligned to the top of the (now possibly multi-line) name
+       instead of sitting far away or being center-squished. */
+    .card-top-row {
+        align-items: flex-start;
+        flex-wrap: nowrap;
+    }
+    .card-top-row .place-name {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    .card-top-row .badge-info {
+        margin-top: 2px;
+    }
+
+    /* The popover used to be centered under the badge itself, but
+       when the badge sits near the card's right edge (short cards,
+       long names) that pushed the 200px-wide box past the screen
+       edge and it got clipped. Anchoring it to the card's own
+       padding box (.result-card is position:relative) instead of
+       the badge keeps it fully within the card — and therefore
+       fully within the screen — no matter where the badge lands. */
+    .badge-info {
+        position: static;
+    }
+    .badge-info-content {
+        left: 16px;
+        right: 16px;
+        width: auto;
+        max-width: none;
+        transform: none;
+    }
+    .badge-info-content::before {
+        display: none;
+    }
+
     .menu-label { font-size: 0.62rem; }
     .menu-name-hero { font-size: 0.92rem; }
 
@@ -1140,6 +1209,14 @@ with col_filter:
 
     if cari:
         st.session_state.is_searching = True
+        # On mobile the result column is stacked below the filter
+        # column (not side-by-side), so give a nudge to scroll down
+        # once the search has been triggered. Hidden on desktop via
+        # the .mobile-only-text class.
+        st.markdown(
+            '<p class="mobile-only-text search-hint">👇 Lihat hasil rekomendasi di bawah</p>',
+            unsafe_allow_html=True
+        )
 
 
 with col_result:
