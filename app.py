@@ -503,11 +503,14 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     align-items: center;
     justify-content: flex-start;
     gap: 6px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 .card-top-row .place-name {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .card-top-row .badge-info {
     flex-shrink: 0;
@@ -755,29 +758,56 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 }
 
 @media (max-width: 640px) {
-    .badge-info-content { width: 190px; font-size: 0.74rem; }
+    .badge-info-content {
+        width: 200px;
+        max-width: calc(100vw - 48px);
+        font-size: 0.74rem;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+    .badge-info-content::before {
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+    }
 }
 
 @media (max-width: 640px) {
     .block-container { padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
 
     .hero-banner { padding: 20px 22px; border-radius: 18px; gap: 12px; }
-    .hero-banner h1 { font-size: 1.9rem; }
+    .hero-banner h1 {
+        font-size: 1.55rem;
+        line-height: 1.2;
+        letter-spacing: 0;
+        overflow-wrap: break-word;
+    }
     .hero-banner p { font-size: 0.85rem; white-space: normal; }
     .hero-eyebrow { font-size: 0.62rem; padding: 5px 11px; }
     .hero-visual { display: none; }
 
     .section-label { font-size: 1.12rem; margin-bottom: 2px; }
 
-    .results-header { font-size: 1.35rem; }
+    /* Trim the large default column gap that Streamlit adds, which
+       left an oversized blank gap once the two columns stack
+       vertically on narrow screens */
+    div[data-testid="stHorizontalBlock"]:has(.section-label) {
+        row-gap: 6px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(.section-label) > div[data-testid="stColumn"] {
+        margin-bottom: 0 !important;
+    }
+
+    .results-header { font-size: 1.35rem; margin-bottom: 14px; }
 
     .result-card {
         grid-template-columns: auto 1fr;
         grid-template-areas:
             "rank body"
             "action action";
-        padding: 12px 14px;
-        gap: 8px 10px;
+        padding: 16px 16px;
+        gap: 10px 12px;
+        margin-bottom: 16px;
     }
     .card-rank {
         grid-area: rank;
@@ -786,20 +816,22 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
     }
     .card-body {
         grid-area: body;
+        gap: 6px;
     }
     .card-action {
         grid-area: action;
     }
     .card-thumb { width: 38px; height: 38px; font-size: 0.9rem; }
-    .card-body .place-name { font-size: 0.86rem; }
-    .menu-name-hero { font-size: 0.78rem; }
+    .card-body .place-name { font-size: 0.98rem; }
+    .menu-label { font-size: 0.62rem; }
+    .menu-name-hero { font-size: 0.92rem; }
 
     .meta-pills { gap: 5px; }
     .metric-pill,
     .dine-tag,
     .rec-type-badge {
-        font-size: 0.68rem;
-        padding: 3px 8px;
+        font-size: 0.7rem;
+        padding: 3px 9px;
     }
     .maps-link { width: 100%; justify-content: center; text-align: center; }
 
