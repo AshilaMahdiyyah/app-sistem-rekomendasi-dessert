@@ -491,7 +491,7 @@ div[data-testid="stButton"] button[kind="secondary"] p{
 .card-body .place-name {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
-    font-size: 1.02rem;
+    font-size: 1.14rem;
     color: var(--text);
     white-space: normal;
     overflow-wrap: break-word;
@@ -545,7 +545,7 @@ div[data-testid="stButton"] button[kind="secondary"] p{
 .menu-name-hero {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
-    font-size: 1.08rem;
+    font-size: 1.2rem;
     line-height: 1.2;
     letter-spacing: 0;
     color: var(--text);
@@ -704,8 +704,8 @@ div[data-testid="stButton"] button[kind="secondary"] p{
 }
 /* swap wording between desktop ("sebelah kiri") and mobile ("di atas")
    layouts, since the columns stack vertically on small screens */
-.desktop-only-text { display: block; }
-.mobile-only-text { display: none; }
+.desktop-only-text { display: block !important; }
+.mobile-only-text { display: none !important; }
 
 .search-hint {
     display: flex;
@@ -788,17 +788,23 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 }
 
 @media (max-width: 640px) {
+    /* Anchor to the badge's own right edge instead of centering.
+       The badge normally sits near the card's right side, so
+       growing the popover leftward from that edge keeps it right
+       below the badge (not the whole card) while staying inside
+       the card's width — nothing to clip. */
     .badge-info-content {
-        width: 200px;
-        max-width: calc(100vw - 48px);
+        width: 220px;
+        max-width: calc(100vw - 64px);
         font-size: 0.74rem;
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
+        left: auto;
+        right: 0;
+        transform: none;
     }
     .badge-info-content::before {
-        left: 50%;
-        transform: translateX(-50%) rotate(45deg);
+        left: auto;
+        right: 14px;
+        transform: rotate(45deg);
     }
 }
 
@@ -860,7 +866,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
        aligned to the top of the (now possibly multi-line) name
        instead of sitting far away or being center-squished. */
     .card-top-row {
-        align-items: flex-start;
+        align-items: baseline;
         flex-wrap: nowrap;
     }
     .card-top-row .place-name {
@@ -871,28 +877,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
         word-break: break-word;
     }
     .card-top-row .badge-info {
-        margin-top: 2px;
-    }
-
-    /* The popover used to be centered under the badge itself, but
-       when the badge sits near the card's right edge (short cards,
-       long names) that pushed the 200px-wide box past the screen
-       edge and it got clipped. Anchoring it to the card's own
-       padding box (.result-card is position:relative) instead of
-       the badge keeps it fully within the card — and therefore
-       fully within the screen — no matter where the badge lands. */
-    .badge-info {
-        position: static;
-    }
-    .badge-info-content {
-        left: 16px;
-        right: 16px;
-        width: auto;
-        max-width: none;
-        transform: none;
-    }
-    .badge-info-content::before {
-        display: none;
+        align-self: baseline;
     }
 
     .menu-label { font-size: 0.62rem; }
@@ -909,8 +894,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 26px; }
 
     .placeholder-state { display: none; }
 
-    .desktop-only-text { display: none; }
-    .mobile-only-text { display: block; }
+    .desktop-only-text { display: none !important; }
+    .mobile-only-text { display: block !important; }
 }
 
 /* Hover/lift transforms are meant for mouse users only — on touch
@@ -1217,7 +1202,7 @@ with col_filter:
         # once the search has been triggered. Hidden on desktop via
         # the .mobile-only-text class.
         st.markdown(
-            '<p class="mobile-only-text search-hint">👇 Lihat hasil rekomendasi di bawah</p>',
+            '<p class="mobile-only-text search-hint">👇🏻 Lihat hasil rekomendasi di bawah</p>',
             unsafe_allow_html=True
         )
 
