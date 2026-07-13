@@ -376,7 +376,7 @@ div[data-testid="stButton"] button[kind="secondary"] p{
 /* ==== 5. FADE-IN ANIMATION FOR RESULTS ==== */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: none; }
 }
 
 .results-header {
@@ -428,6 +428,9 @@ div[data-testid="stButton"] button[kind="secondary"] p{
     box-shadow: 0 8px 18px rgba(142,24,51,0.16);
     transform: translateY(-2px);
     border-color: var(--accent);
+}
+.result-card:has(.badge-info[open]) {
+    z-index: 50;
 }
 
 .star-rating {
